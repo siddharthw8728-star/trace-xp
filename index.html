@@ -1,0 +1,764 @@
+n<!DOCTYPE html>
+<html lang="en">
+<head>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+background:
+linear-gradient(
+rgba(0,0,0,0.35),
+rgba(0,0,0,0.35)
+),
+url("worldmap.png");
+
+background-size:cover;
+color:white;
+    font-family:'Poppins',sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    margin:0;
+}
+
+.container{
+
+
+    width:90%;
+
+    max-width:700px;
+
+    background:rgba(7,15,40,0.55);
+
+    padding:35px;
+
+    border-radius:20px;
+
+    border:1px solid rgba(34,197,94,0.15);
+
+    box-shadow:
+    0 0 25px rgba(34,197,94,0.15),
+    0 0 80px rgba(34,197,94,0.08);
+
+}
+
+h1{
+
+    text-align:center;
+
+    font-family:'Orbitron',sans-serif;
+
+    color:#22c55e;
+
+    font-size:48px;
+
+    font-weight:700;
+
+    letter-spacing:4px;
+
+    text-shadow:
+    0 0 4px rgba(34,197,94,0.35);
+
+}
+.subtitle{
+
+font-size:20px;
+letter-spacing:2px;
+text-align:center;
+}
+
+input{
+    width:100%;
+    padding:16px;
+
+    background:#0f172a;
+    color:white;
+
+    border:1px solid #334155;
+    border-radius:10px;
+
+    transition:0.3s ease;
+}
+input:focus{
+
+    outline:none;
+
+    border-color:#22c55e;
+
+    box-shadow:
+    0 0 15px rgba(34,197,94,0.3);
+
+}
+button{
+width:100%;
+margin-top:15px;
+    padding:16px 18px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+
+    background:#22c55e;
+    color:white;
+    font-weight:600;
+
+    transition:0.3s ease;
+}
+button:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+    0 0 20px rgba(34,197,94,0.4);
+
+}
+#loadingSection{
+    display:none;
+    margin-top:20px;
+}
+
+.progress-container{
+    width:100%;
+    height:20px;
+    background:#1f2937;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress-bar{
+    width:0%;
+    height:100%;
+
+    background:linear-gradient(
+    90deg,
+    #22c55e,
+    #4ade80,
+    #22c55e
+    );
+
+    background-size:200% 100%;
+
+    animation:progressGlow 1s linear infinite;
+
+    transition:width 0.1s;
+}
+
+#status{
+
+    margin-top:10px;
+
+    text-align:left;
+
+    font-family:monospace;
+
+    line-height:1.8;
+
+    color:#4ade80;
+
+}
+.result-card{
+    display:none;
+    margin-top:20px;
+    background:#1f2937;
+    padding:20px;
+    border-radius:12px;
+
+    border:1px solid #334155;
+
+    opacity:0;
+    transform:translateY(20px);
+
+    transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+}
+.result-card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:
+    0 15px 35px rgba(0,0,0,0.35);
+
+}
+.map-box{
+    height:280px;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:15px;
+}
+
+.map-box img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+transition:0.4s ease;
+}
+@keyframes bgMove{
+
+    0%{
+        background-position:0% 50%;
+    }
+
+    50%{
+        background-position:100% 50%;
+    }
+
+    100%{
+        background-position:0% 50%;
+    }
+
+}
+@keyframes progressGlow{
+
+    0%{
+        background-position:0% 0%;
+    }
+
+    100%{
+        background-position:200% 0%;
+    }
+
+}
+.info-item{
+    line-height:1.8;
+    color:#e2e8f0;
+}
+
+.verified{
+
+    display:inline-block;
+
+    background:#22c55e;
+
+    color:white;
+
+    padding:8px 14px;
+
+    border-radius:20px;
+
+    font-size:12px;
+
+    font-weight:600;
+
+    margin-top:10px;
+}
+.result-card:hover .map-box img{
+
+    transform:scale(1.05);
+
+}
+#resultUser{
+
+    color:#22c55e;
+
+    font-size:32px;
+
+    font-weight:700;
+
+    letter-spacing:2px;
+
+    text-transform:none;
+    text-shadow:
+    0 0 15px rgba(34,197,94,0.6);
+
+}
+#loginScreen{
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+.login-box{
+
+    width:500px;
+
+    max-width:90%;
+
+    text-align:center;
+
+}
+#bootScreen{
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:#050b1a;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:9999;
+
+    color:#22c55e;
+
+    font-family:monospace;
+
+    text-shadow:
+    0 0 15px rgba(34,197,94,0.8);
+
+}
+
+#bootScreen h1{
+
+    font-size:50px;
+
+    margin-bottom:10px;
+
+}
+
+#bootScreen p{
+
+    font-size:18px;
+
+    letter-spacing:2px;
+
+}
+.password-box{
+
+    position:relative;
+
+    width:100%;
+
+}
+
+.password-box input{
+
+    width:100%;
+
+}
+
+.password-box span{
+
+    position:absolute;
+
+    right:15px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    cursor:pointer;
+
+    font-size:20px;
+
+}
+@keyframes shake{
+
+    0%{transform:translateX(0);}
+
+    25%{transform:translateX(-10px);}
+
+    50%{transform:translateX(10px);}
+
+    75%{transform:translateX(-10px);}
+
+    100%{transform:translateX(0);}
+}
+
+.shake{
+
+    animation:shake 0.4s ease;
+
+}
+.hud-top{
+
+    text-align:center;
+
+    color:#22c55e;
+
+    font-size:14px;
+
+    letter-spacing:2px;
+
+    margin-bottom:20px;
+
+    padding:10px;
+
+    border:1px solid rgba(34,197,94,0.3);
+
+    background:rgba(34,197,94,0.05);
+
+    border-radius:8px;
+
+}
+.system-panel{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+    padding:12px;
+
+    border:1px solid rgba(34,197,94,0.3);
+
+    border-radius:8px;
+
+    background:rgba(34,197,94,0.05);
+
+    color:#22c55e;
+
+    font-size:13px;
+
+}
+#mainApp{
+    background:rgba(7,15,40,0.55) !important;
+    padding:35px !important;
+    border-radius:20px !important;
+    box-shadow:
+    0 0 25px rgba(34,197,94,0.15),
+    0 0 80px rgba(34,197,94,0.08) !important;
+}
+</style>
+</head>
+
+<body>
+<div id="loginScreen">
+
+    <div class="login-box">
+
+        <h1>TRACE-X</h1>
+
+        <p class="subtitle">
+            Restricted Access Portal
+        </p>
+
+        <input
+            type="text"
+            id="loginUser"
+            placeholder="Username">
+
+<div class="password-box">
+
+<input
+type="password"
+id="loginPass"
+placeholder="Password"
+onkeypress="if(event.key==='Enter') login()">
+    <span onclick="togglePassword()">
+        👁️
+    </span>
+
+</div>
+        <button onclick="login()">
+            ACCESS DATABASE
+        </button>
+
+        <p id="loginError"
+style="
+color:#ef4444;
+font-weight:600;
+margin-top:15px;
+"></p>
+
+    </div>
+
+</div>
+
+<div id="bootScreen" style="display:none;">
+
+    <h1>ACCESS GRANTED</h1>
+
+    <p>Initializing TRACE-X...</p>
+
+</div>
+<div class="container" id="mainApp" style="display:none;">
+<div class="hud-top">
+🔒 SECURE CONNECTION ESTABLISHED
+</div>
+<div class="system-panel">
+
+<div>🟢 SYSTEM ONLINE</div>
+
+<div id="currentDate">
+01-JUNE-2026
+</div>
+
+</div>
+<h1>TRACE-X</h1>
+
+<p class="subtitle">
+Accessing Intelligence Database...
+</p>
+<input
+type="text"
+id="username"
+placeholder="Enter Username"
+onkeypress="if(event.key==='Enter') searchUser()"><button onclick="searchUser()">
+🔍 Locate Profile
+</button>
+
+<div id="loadingSection">
+
+<div class="progress-container">
+<div class="progress-bar" id="bar"></div>
+</div>
+
+<div id="status">
+Searching database...
+</div>
+
+</div>
+
+<div class="result-card" id="resultCard">
+
+<div class="map-box">
+    <img id="resultImage"
+         src=""
+         style="
+         width:100%;
+         height:100%;
+         object-fit:cover;
+         border-radius:10px;">
+</div>
+<h2 id="resultUser"></h2>
+
+<p id="resultLocation"></p>
+
+</div>
+
+</div>
+
+<script>
+function togglePassword(){
+
+    const pass =
+    document.getElementById("loginPass");
+
+    const eye =
+    document.querySelector(".password-box span");
+
+    if(pass.type === "password"){
+
+        pass.type = "text";
+
+        eye.innerHTML = "🙈";
+
+    }else{
+
+        pass.type = "password";
+
+        eye.innerHTML = "👁️";
+
+    }
+
+}function login(){
+
+    const user =
+    document.getElementById("loginUser").value;
+
+    const pass =
+    document.getElementById("loginPass").value;
+
+    if(user === "admin" &&
+       pass === "tracex"){
+
+document.getElementById("loginScreen")
+.style.display = "none";
+
+document.getElementById("bootScreen")
+.style.display = "flex";
+
+setTimeout(()=>{
+
+    document.getElementById("bootScreen")
+    .style.display = "none";
+
+    document.getElementById("mainApp")
+    .style.display = "block";
+
+},2500);
+    }else{
+
+        document.getElementById("loginError")
+        .innerText = "Invalid Username or Password";
+document.querySelector(".login-box")
+.classList.add("shake");
+
+setTimeout(()=>{
+
+document.querySelector(".login-box")
+.classList.remove("shake");
+
+},400);
+
+    }
+
+}
+
+const users = {
+    "void.fms": {
+        location: "Trilok Heights",
+        device: "Vivo V2029",
+        image: "abc.png"
+    },
+    "siddharthwaghmare_4229": {
+        location: "PES College of Engineering , Behind Panchakki, Chh. Sambhajinagar ",
+        device: "Realme 14T 5g",
+        image: "abc2.png"
+    },
+    "void_fms": {
+        location: "PES College of Engineering , Behind Panchakki, Chh. Sambhajinagar ",
+        device: "Redmi Note 7",
+        image: "abc2.png"
+    },
+
+    "Instagram User": {
+        location: "PES College of Engineering , Behind Panchakki, Chh. Sambhajinagar ",
+        device: "Vivo V2029",
+        image: "abc2.png"
+    }
+};
+
+function searchUser(){
+
+    const username =
+    document.getElementById("username")
+    .value.trim();
+
+    const loading =
+    document.getElementById("loadingSection");
+
+    const card =
+    document.getElementById("resultCard");
+
+    const bar =
+    document.getElementById("bar");
+
+    const status =
+    document.getElementById("status");
+
+loading.style.display="block";
+card.style.display="none";
+
+card.style.opacity="0";
+card.style.transform="translateY(20px)";
+    let progress=0;
+
+const messages=[
+
+    "Initializing TRACE-X...",
+
+    "Scanning Network Nodes...",
+
+    "Accessing Intelligence Database...",
+
+    "Decrypting Records...",
+
+    "Target Located..."
+
+];
+
+    let msgIndex=0;
+
+    status.innerHTML = messages[0];
+    bar.style.width="0%";
+
+    const interval=setInterval(()=>{
+
+        progress+=2;
+
+        bar.style.width=progress+"%";
+
+        if(progress%20===0 &&
+           msgIndex<messages.length-1){
+
+            msgIndex++;
+
+status.innerHTML +=
+"<br>" + messages[msgIndex];
+        }
+
+        if(progress>=100){
+
+            clearInterval(interval);
+
+            loading.style.display="none";
+
+            if(users[username]){
+
+                document
+                .getElementById("resultUser")
+                .innerText=username;
+document.getElementById("resultImage").src =
+users[username].image;
+
+console.log(users[username].image);
+
+document
+.getElementById("resultLocation")
+.innerHTML=`
+
+<div class="info-item">
+📍 <b>Location</b>
+<br>
+${users[username].location}
+</div>
+
+<br>
+
+<div class="info-item">
+📱 <b>Device</b>
+<br>
+${users[username].device}
+</div>
+
+<br>
+
+<div class="verified">
+✅ Verified Record
+</div>
+
+`;
+            }else{
+
+                document
+                .getElementById("resultUser")
+                .innerText="⚠ No User Found";
+
+                document
+                .getElementById("resultLocation")
+                .innerHTML="";
+            }
+
+            card.style.display="block";
+setTimeout(()=>{
+
+    card.style.opacity="1";
+
+    card.style.transform=
+    "translateY(0)";
+
+},50);
+        }
+	
+    },400);
+}
+</script>
+
+</body>
+</html>
+
